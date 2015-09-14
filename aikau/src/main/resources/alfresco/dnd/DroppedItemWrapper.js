@@ -365,7 +365,7 @@ define(["dojo/_base/declare",
          dialogTitle: "{item.name}",
          formSubmissionTopic: "{subscriptionTopic}",
          formSubmissionPayloadMixin: "{payloadMixin}",
-         dialogWidth: "80%",
+         // dialogWidth: "80%",
          fixedWidth: true,
          formValue: "{item}",
          widgets: "{widgets}"
