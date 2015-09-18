@@ -9,6 +9,7 @@ model.jsonModel = {
             }
          }
       },
+      "alfresco/services/NavigationService",
       {
          name: "aikauTesting/mockservices/PaginationService",
          config: {
