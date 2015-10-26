@@ -36,7 +36,7 @@ define(["dojo/_base/declare",
        *
        * @instance
        */
-      setupServer: function alfresco_testing_TaggingMockXhr__setupServer() {
+      setupServer: function alfresco_testing_RMSecurityMockXhr__setupServer() {
          try
          {
             this.tags = [];
@@ -55,6 +55,12 @@ define(["dojo/_base/declare",
             this.server.respondWith("GET",
                                     /\/aikau\/proxy\/alfresco\/getAllSecurityMarks(.*)/,
                                     lang.hitch(this, this.getAllSecurityMarks));
+            this.server.respondWith("DELETE",
+                                    /\/aikau\/proxy\/alfresco\/deleteCaveat(.*)/,
+                                    lang.hitch(this, this.deleteCaveat));
+            this.server.respondWith("DELETE",
+                                    /\/aikau\/proxy\/alfresco\/deleteSecurityMark(.*)/,
+                                    lang.hitch(this, this.deleteSecurityMark));
             this.server.respondWith("POST",
                                     /.*\/aikau\/proxy\/alfresco\/api\/node\/.*\/formprocessor/,
                                     "OK");
@@ -76,60 +82,63 @@ define(["dojo/_base/declare",
       caveats: null,
 
       /**
-       * Simulates adding a new tag.
+       * Simulates adding a new caveat.
        *
        * @instance
        */
-      addCaveat: function alfresco_testing_TaggingMockXhr__addCaveat(request) {
+      addCaveat: function alfresco_testing_RMSecurityMockXhr__addCaveat(request) {
          var caveatName = JSON.parse(request.requestBody).name;
          var caveat = {
-            id: this.generateUuid(),
+            caveatId: this.generateUuid(),
             name: caveatName,
-            marks: []
+            marks: [],
+            markCount: 0,
+            userCount: 0,
+            groupCount: 0
          };
          this.caveats.push(caveat);
 
-         var response = {
-            id: caveat.id,
-            name: caveat.name,
-            marks: caveat.marks
-         };
          request.respond(200, {
             "Content-Type": "application/json;charset=UTF-8"
-         }, JSON.stringify(response));
+         }, JSON.stringify(caveat));
       },
 
       /**
-       * Simulates adding a new tag.
+       * Simulates adding a new security mark to a caveat.
        *
        * @instance
        */
-      addSecurityMark: function alfresco_testing_TaggingMockXhr__addSecurityMark(request) {
+      addSecurityMark: function alfresco_testing_RMSecurityMockXhr__addSecurityMark(request) {
          var body = JSON.parse(request.requestBody);
-         var caveatId = body.caveat;
+         var caveatId = body.caveatId;
          var securityMarkName = body.name;
 
          var securityMark = {
-            id: this.generateUuid(),
-            name: securityMarkName
+            markId: this.generateUuid(),
+            name: securityMarkName,
+            access: body.access,
+            userCount: 0,
+            groupCount: 0
          };
 
          var caveat = this.getCaveatById(caveatId);
          caveat.marks.push(securityMark);
 
-         var response = {
-            id: securityMark.id,
-            name: securityMark.name
-         };
+         
          request.respond(200, {
             "Content-Type": "application/json;charset=UTF-8"
-         }, JSON.stringify(response));
+         }, JSON.stringify(securityMark));
       },
 
-      getCaveatById: function alfresco_testing_TaggingMockXhr__getCaveatById(caveatId) {
+      /**
+       * Finds and returns an existing caveat based on its id
+       *
+       * @instance
+       */
+      getCaveatById: function alfresco_testing_RMSecurityMockXhr__getCaveatById(caveatId) {
          var foundCaveat = null;
          array.forEach(this.caveats, function(caveat) {
-            if (caveat.id === caveatId)
+            if (caveat.caveatId === caveatId)
             {
                foundCaveat = caveat;
             }
@@ -138,11 +147,11 @@ define(["dojo/_base/declare",
       },
 
       /**
-       * Simulates getting the tags based on a supplied filter
+       * Simulates getting all the caveats
        *
        * @instance
        */
-      getAllCaveats: function alfresco_testing_TaggingMockXhr__getAllCaveats(request) {
+      getAllCaveats: function alfresco_testing_RMSecurityMockXhr__getAllCaveats(request) {
          if (!this.caveats)
          {
             this.caveats = [];
@@ -157,15 +166,17 @@ define(["dojo/_base/declare",
          }, JSON.stringify(response));
       },
 
-      getAllSecurityMarks: function alfresco_testing_TaggingMockXhr__getAllSecurityMarks(request, queryString) {
+      /**
+       * Simulates getting all the security marks for a caveat
+       *
+       * @instance
+       */
+      getAllSecurityMarks: function alfresco_testing_RMSecurityMockXhr__getAllSecurityMarks(request, queryString) {
          queryString = queryString.substring(1);
 
-         var params = queryString.split("&");
-         var caveatId = params[0].split("=");
-         var caveatIdValue = caveatId[1];
-
+         var queryObject = ioQuery.queryToObject(queryString);
+         var targetCaveat = this.getCaveatById(queryObject.caveatId);
          var targetMarks = [];
-         var targetCaveat = this.getCaveatById(caveatIdValue);
          if (targetCaveat)
          {
             targetMarks = targetCaveat.marks;
@@ -181,11 +192,54 @@ define(["dojo/_base/declare",
       },
 
       /**
+       * Simulates deletion of a caveat
+       *
+       * @instance
+       */
+      deleteCaveat: function alfresco_testing_RMSecurityMockXhr__deleteCaveat(request, queryString) {
+         queryString = queryString.substring(1);
+         var queryObject = ioQuery.queryToObject(queryString);
+
+         this.caveats = array.filter(this.caveats, function(caveat) {
+            return caveat.caveatId !== queryObject.caveatId;
+         });
+         var response = {
+            success: true
+         };
+
+         request.respond(200, {
+            "Content-Type": "application/json;charset=UTF-8"
+         }, JSON.stringify(response));
+      },
+
+      /**
+       * Simulates deletion of a security mark
+       *
+       * @instance
+       */
+      deleteSecurityMark: function alfresco_testing_RMSecurityMockXhr__deleteCaveat(request, queryString) {
+         queryString = queryString.substring(1);
+         var queryObject = ioQuery.queryToObject(queryString);
+         var targetCaveat = this.getCaveatById(queryObject.caveatId);
+
+         targetCaveat.marks = array.filter(targetCaveat.marks, function(mark) {
+            return mark.markId !== queryObject.markId;
+         });
+         var response = {
+            success: true
+         };
+
+         request.respond(200, {
+            "Content-Type": "application/json;charset=UTF-8"
+         }, JSON.stringify(response));
+      },
+
+      /**
        * Simulates the response when updating the tags on a node
        *
        * @instance
        */
-      updateTags: function alfresco_testing_TaggingMockXhr__updateTags(request) {
+      updateTags: function alfresco_testing_RMSecurityMockXhr__updateTags(request) {
          var nodeRef = JSON.parse(request.requestBody).prop_cm_taggable;
          var response = {
              persistedObject: nodeRef,
