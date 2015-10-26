@@ -20,22 +20,17 @@
 /**
  * 
  * @module alfresco/documentlibrary/QuaddsList
- * @extends alfresco/documentlibrary/AlfDocumentList
+ * @extends alfresco/lists/AlfList
  * @author Dave Draper
  */
 define(["dojo/_base/declare",
-        "alfresco/documentlibrary/AlfDocumentList"], 
+        "alfresco/lists/AlfList"], 
         function(declare, AlfDocumentList) {
    
    return declare([AlfDocumentList], {
       
-      /**
-       * 
-       * @instance
-       * @type {string}
-       * @default
-       */
-      dataRequestTopic: null,
+
+      loadDataPublishTopic: "ALF_GET_QUADDS_ITEMS",
 
       /**
        * This is the QuADDS to get data for. 
@@ -47,21 +42,32 @@ define(["dojo/_base/declare",
       quadds: null,
 
       /**
+       * This is an extension point for extending modules to use. By default it does nothing to
+       * the supplied payload.
+       *
+       * @instance
+       * @param {object} payload The payload object to update
+       */
+      updateLoadDataPayload: function alfresco_lists_AlfList__updateLoadDataPayload(payload) {
+         payload.quadds = this.quadds;
+      },
+
+      /**
        * Overrides the default implementation to retrieve site data.
        *
        * @instance
        */
-      loadData: function alfresco_documentlibrary_QuaddsList__loadData() {
-         this.clearViews();
-         this.showLoadingMessage();
+      // loadData: function alfresco_documentlibrary_QuaddsList__loadData() {
+      //    this.clearViews();
+      //    this.showLoadingMessage();
 
-         // Set a response topic that is scoped to this widget...
-         var quaddsPayload = {
-            responseTopic: "ALF_RETRIEVE_DOCUMENTS_REQUEST",
-            quadds: this.quadds
-         };
-         this.alfPublish("ALF_GET_QUADDS_ITEMS", quaddsPayload);
-      },
+      //    // Set a response topic that is scoped to this widget...
+      //    var quaddsPayload = {
+      //       responseTopic: "ALF_RETRIEVE_DOCUMENTS_REQUEST",
+      //       quadds: this.quadds
+      //    };
+      //    this.alfPublish("ALF_GET_QUADDS_ITEMS", quaddsPayload);
+      // },
 
       /**
        * Handles successful calls to get site data.
