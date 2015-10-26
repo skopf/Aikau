@@ -1,0 +1,6 @@
+<webscript>
+  <shortname>RM Caveats</shortname>
+  <description>Prototype page for RM Caveats</description>
+  <family>aikau-unit-tests</family>
+  <url>/RMCaveats</url>
+</webscript>
