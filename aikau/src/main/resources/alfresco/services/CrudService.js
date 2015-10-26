@@ -93,8 +93,12 @@ define(["dojo/_base/declare",
             // Don't make a refresh request...
          } else {
             // When refreshing, check to see if a pubSubScope was provided...
-            var pubSubScope = lang.getObject("data.pubSubScope", false, originalRequestConfig) || "";
-            this.alfPublish(pubSubScope + "ALF_DOCLIST_RELOAD_DATA");
+            var pubSubScope = lang.getObject("data.pubSubScope", false, originalRequestConfig);
+            if (!pubSubScope)
+            {
+               pubSubScope = lang.getObject("data.responseScope", false, originalRequestConfig) || "";
+            }
+            this.alfPublish("ALF_DOCLIST_RELOAD_DATA", null, false, false, pubSubScope);
          }
       },
 
