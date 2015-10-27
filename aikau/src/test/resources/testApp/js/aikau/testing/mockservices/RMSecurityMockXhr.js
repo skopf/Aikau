@@ -26,7 +26,8 @@ define(["dojo/_base/declare",
         "dojo/_base/array",
         "dojo/io-query",
         "aikauTesting/MockXhr",
-        "alfresco/core/Core"], 
+        "alfresco/core/Core",
+        "alfresco/forms/controls/MultiSelectInput"], 
         function(declare, lang, array, ioQuery, MockXhr, Core) {
    
    return declare([MockXhr, Core], {
@@ -39,7 +40,6 @@ define(["dojo/_base/declare",
       setupServer: function alfresco_testing_RMSecurityMockXhr__setupServer() {
          try
          {
-            this.tags = [];
             this.server.respondWith("POST",
                                     "/aikau/proxy/alfresco/addCaveat",
                                     lang.hitch(this, this.addCaveat));
@@ -61,9 +61,11 @@ define(["dojo/_base/declare",
             this.server.respondWith("DELETE",
                                     /\/aikau\/proxy\/alfresco\/deleteSecurityMark(.*)/,
                                     lang.hitch(this, this.deleteSecurityMark));
-            this.server.respondWith("POST",
-                                    /.*\/aikau\/proxy\/alfresco\/api\/node\/.*\/formprocessor/,
-                                    "OK");
+            this.server.respondWith("GET",
+                                    /\/aikau\/proxy\/alfresco\/getUsersAndGroups(.*)/,
+                                    lang.hitch(this, this.getUsersAndGroups));
+
+            this.alfSubscribe("ALF_RM_APPLY_CAVEATS_DIALOG", lang.hitch(this, this.showApplyCaveatsDialog));
          }
          catch(e)
          {
@@ -191,6 +193,65 @@ define(["dojo/_base/declare",
          }, JSON.stringify(response));
       },
 
+      usersAndGroups: [
+         {
+            name: "Peter Griffin",
+            type: "USER"
+         },
+         {
+            name: "Chris Griffin",
+            type: "USER"
+         },
+         {
+            name: "Glenn Quagmire",
+            type: "USER"
+         },
+         {
+            name: "Joe Swanson",
+            type: "USER"
+         },
+         {
+            name: "Griffins",
+            type: "GROUP"
+         }
+      ],
+
+      /**
+       * Simulates getting all the security marks for a caveat
+       *
+       * @instance
+       */
+      getUsersAndGroups: function alfresco_testing_RMSecurityMockXhr__getUsersAndGroups(request, queryString) {
+         queryString = queryString.substring(1);
+
+         var queryObject = ioQuery.queryToObject(queryString);
+         
+         var filteredResults = this.usersAndGroups;
+         if (queryObject.usersOrGroups && queryObject.usersOrGroups !== "BOTH")
+         {
+            var type = queryObject.usersOrGroups;
+            filteredResults = array.filter(filteredResults, function(item) {
+               return item.type === type;
+            });
+         }
+
+         if (queryObject.name)
+         {
+            var target = queryObject.name.toLowerCase();
+            filteredResults = array.filter(filteredResults, function(item) {
+               return item.name.toLowerCase().indexOf(target) !== -1;
+            });
+         }
+
+         var response = {
+            items: filteredResults
+         };
+
+         request.respond(200, {
+            "Content-Type": "application/json;charset=UTF-8"
+         }, JSON.stringify(response));
+      },
+
       /**
        * Simulates deletion of a caveat
        *
@@ -235,19 +296,41 @@ define(["dojo/_base/declare",
       },
 
       /**
-       * Simulates the response when updating the tags on a node
+       * Creates a dialog for the applying caveats
        *
        * @instance
        */
-      updateTags: function alfresco_testing_RMSecurityMockXhr__updateTags(request) {
-         var nodeRef = JSON.parse(request.requestBody).prop_cm_taggable;
-         var response = {
-             persistedObject: nodeRef,
-             message: "Successfully persisted form for item [node]" + nodeRef
-         };
-         request.respond(200, {
-            "Content-Type": "application/json;charset=UTF-8"
-         }, JSON.stringify(response));
+      showApplyCaveatsDialog: function alfresco_testing_RMSecurityMockXhr__showApplyCaveatsDialog(request) {
+         
+         var fields = [];
+         array.forEach(this.caveats, function(caveat) {
+            var fieldWidget = {
+               name: "alfresco/forms/controls/MultiSelectInput",
+               config: {
+                  name: caveat.caveatId,
+                  label: caveat.name,
+                  optionsConfig: {
+                     fixed: caveat.marks,
+                     queryAttribute: "name",
+                     valueAttribute: "caveatId",
+                     labelAttribute: "name"
+                  }
+               }
+            };
+            fields.push(fieldWidget);
+         }, this);
+
+         this.alfPublish("ALF_CREATE_FORM_DIALOG_REQUEST", {
+            dialogId: "APPLY_CAVEATS",
+            dialogTitle: "Apply Caveats",
+            formSubmissionTopic: "ALF_CRUD_UPDATE",
+            formSubmissionPayloadMixin: {
+               url: "applyCaveats"
+            },
+            formSubmissionGlobal: true,
+            widgets: fields
+         }, true);
+
       }
    });
 });
