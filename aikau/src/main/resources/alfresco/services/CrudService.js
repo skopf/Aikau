@@ -325,7 +325,7 @@ define(["dojo/_base/declare",
                      publishTopic: responseTopic,
                      publishPayload: {
                         url: url,
-                        pubSubScope: payload.pubSubScope,
+                        responseScope: payload.alfResponseScope,
                         responseTopic: payload.responseTopic,
                         successMessage: this.message(payload.successMessage || "crudservice.generic.success.message"),
                         failureMessage: this.message(payload.failureMessage || "crudservice.generic.failure.message")
