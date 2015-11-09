@@ -27,9 +27,9 @@ define(["dojo/_base/declare",
         "dojo/io-query",
         "aikauTesting/MockXhr",
         "alfresco/core/Core",
-        "alfresco/forms/controls/MultiSelectInput"], 
+        "alfresco/forms/controls/MultiSelectInput"],
         function(declare, lang, array, ioQuery, MockXhr, Core) {
-   
+
    return declare([MockXhr, Core], {
 
       /**
@@ -76,12 +76,321 @@ define(["dojo/_base/declare",
 
       /**
        * An array of tags managed in memory by this mock XHR handler.
-       * 
+       *
        * @instance
        * @type {object[]}
        * @default
        */
-      caveats: null,
+      caveats: [
+         {
+            caveatId: 1,
+            name: "Caveat Group 1",
+            marks: [
+               {
+                     markId: 11,
+                     name: "Mark 1",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 12,
+                        name: "Mark 2",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 13,
+                           name: "Mark 3",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 14,
+                              name: "Mark 4",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 15,
+                                 name: "Mark 5",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         },
+         {
+            caveatId: 2,
+            name: "Caveat Group 2",
+            marks: [
+               {
+                     markId: 21,
+                     name: "Mark 1",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 22,
+                        name: "Mark 2",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 23,
+                           name: "Mark 3",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 24,
+                              name: "Mark 4",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 25,
+                                 name: "Mark 5",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         },
+         {
+            caveatId: 3,
+            name: "Caveat Group 3",
+            marks: [
+               {
+                     markId: 31,
+                     name: "Mark 1",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 32,
+                        name: "Mark 2",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 33,
+                           name: "Mark 3",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 34,
+                              name: "Mark 4",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 35,
+                                 name: "Mark 5",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         },
+         {
+            caveatId: 4,
+            name: "Caveat Group 4",
+            marks: [
+               {
+                     markId: 41,
+                     name: "Mark 1",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 42,
+                        name: "Mark 2",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 43,
+                           name: "Mark 3",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 44,
+                              name: "Mark 4",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 45,
+                                 name: "Mark 5",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         },
+         {
+            caveatId: 5,
+            name: "Caveat Group 5",
+            marks: [
+               {
+                     markId: 51,
+                     name: "Mark 1",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 52,
+                        name: "Mark 2",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 53,
+                           name: "Mark 3",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 54,
+                              name: "Mark 4",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 55,
+                                 name: "Mark 5",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         },
+         {
+            caveatId: 6,
+            name: "Classification",
+            marks: [
+               {
+                     markId: 61,
+                     name: "Top Secret",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 62,
+                        name: "Secret",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 63,
+                           name: "Confidential",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 64,
+                              name: "Classified",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 65,
+                                 name: "Unclassified",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         },
+         {
+            caveatId: 7,
+            name: "Nationality",
+            marks: [
+               {
+                     markId: 71,
+                     name: "UK",
+                     access: false,
+                     userCount: 0,
+                     groupCount: 0
+               },
+                  {
+                        markId: 72,
+                        name: "US",
+                        access: false,
+                        userCount: 0,
+                        groupCount: 0
+                  },
+                     {
+                           markId: 73,
+                           name: "AUS",
+                           access: false,
+                           userCount: 0,
+                           groupCount: 0
+                     },
+                        {
+                              markId: 74,
+                              name: "CAN",
+                              access: false,
+                              userCount: 0,
+                              groupCount: 0
+                        },
+                           {
+                                 markId: 75,
+                                 name: "NZ",
+                                 access: false,
+                                 userCount: 0,
+                                 groupCount: 0
+                           },
+            ],
+            markCount: 5,
+            userCount: 0,
+            groupCount: 0
+         }
+      ],
 
       /**
        * Simulates adding a new caveat.
@@ -126,7 +435,7 @@ define(["dojo/_base/declare",
          var caveat = this.getCaveatById(caveatId);
          caveat.marks.push(securityMark);
 
-         
+
          request.respond(200, {
             "Content-Type": "application/json;charset=UTF-8"
          }, JSON.stringify(securityMark));
@@ -225,7 +534,7 @@ define(["dojo/_base/declare",
          queryString = queryString.substring(1);
 
          var queryObject = ioQuery.queryToObject(queryString);
-         
+
          var filteredResults = this.usersAndGroups;
          if (queryObject.usersOrGroups && queryObject.usersOrGroups !== "BOTH")
          {
@@ -301,7 +610,7 @@ define(["dojo/_base/declare",
        * @instance
        */
       showApplyCaveatsDialog: function alfresco_testing_RMSecurityMockXhr__showApplyCaveatsDialog(request) {
-         
+
          var fields = [];
          array.forEach(this.caveats, function(caveat) {
             var fieldWidget = {
